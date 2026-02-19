@@ -81,7 +81,7 @@ function App() {
   }
 
   return (
-    <div className="Notebook">
+    <div className="notebook">
       <h1 className="notebook-title">My Notes</h1>
       <form onSubmit={addTodo} className="todo-form">
         <input
@@ -89,6 +89,7 @@ function App() {
           value={newTodo}
           onChange={(e) => setNewTodo(e.target.value)}
           placeholder="Add new note..."
+          className="todo-input"
         />
         <button type="submit" className="add-btn">+</button>
       </form>
