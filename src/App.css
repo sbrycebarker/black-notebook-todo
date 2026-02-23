@@ -114,6 +114,19 @@
   color: #666;
 }
 
+/* Edit input (appears when double-clicking a note) */
+.edit-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #888;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  padding: 0;
+  outline: none;
+}
+
 /* Delete button */
 .delete-btn {
   background: transparent;

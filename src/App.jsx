@@ -6,6 +6,8 @@ function App() {
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState('');
   const [loading, setLoading] = useState(true);
+  const [editingId, setEditingId] = useState(null);
+  const [editText, setEditText] = useState('');
 
   // Fetch all todos from Supabase when the page loads
   useEffect(() => {
@@ -80,6 +82,25 @@ function App() {
     }
   }
 
+  // Save edited text to the database
+  async function saveTodo(id) {
+    if (!editText.trim()) return;
+
+    const { error } = await supabase
+      .from('todolist')
+      .update({ text: editText })
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error editing todo:', error);
+    } else {
+      setTodos(todos.map(todo =>
+        todo.id === id ? { ...todo, text: editText } : todo
+      ));
+    }
+    setEditingId(null);
+  }
+
   return (
     <div className="notebook">
       <h1 className="notebook-title">My Notes</h1>
@@ -100,12 +121,26 @@ function App() {
         <ul className="todo-list">
           {todos.map(todo => (
             <li key={todo.id} className={`todo-item ${todo.completed ? 'completed' : ''}`}>
-              <span
-                onClick={() => toggleTodo(todo.id, todo.completed)}
-                className="todo-text"
-              >
-                {todo.text}
-              </span>
+              {editingId === todo.id ? (
+                <input
+                  className="edit-input"
+                  value={editText}
+                  onChange={(e) => setEditText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') saveTodo(todo.id);
+                    if (e.key === 'Escape') setEditingId(null);
+                  }}
+                  autoFocus
+                />
+              ) : (
+                <span
+                  onClick={() => toggleTodo(todo.id, todo.completed)}
+                  onDoubleClick={() => { setEditingId(todo.id); setEditText(todo.text); }}
+                  className="todo-text"
+                >
+                  {todo.text}
+                </span>
+              )}
               <button
                 onClick={() => deleteTodo(todo.id)}
                 className="delete-btn"
